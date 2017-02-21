@@ -189,31 +189,8 @@ void printHeader()
     g << "cerberus\n" << "in2dfacpov96mvno2h714uaed0\n";
 }
 
-void printOutput(int test)
+void printDraw(int test)
 {
-    g << test << ": ";
-
-    if(test == 1){
-        g << "(0, 0), (5, 0), (0, 7), (1, 8); (5, 0), (9, 9), (8, 10); (9, 9), (10, 10)\n";
-        return ;
-    } else if(test == 2){
-        g << "(-1, -1), (0, 6), (1, 6), (2, 2), (4, 2), (4, 4)\n";
-        return ;
-    } //else if(test == 3){
-        //g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
-       // return ;
-    //}
-    else if(test == 8 || test == 9 || test == 10){
-        for (int i = 0; i < robots.size() - 1; i++)
-        {
-            g << setprecision(18) << "(" << robots[i].x << ", " << robots[i].y << "), ";
-        }
-        g << setprecision(18) << "(" << robots[robots.size() - 1].x << ", " << robots[robots.size() - 1].y << ")\n";
-        return ;
-    }
-
-    if(test == 4)
-    {
         g1 << robots.size() << '\n';
         for (int i = 0; i < robots.size() - 1; i++)
         {
@@ -237,8 +214,34 @@ void printOutput(int test)
             g1 << setprecision(18) << sol[i].x << " " << sol[i].y << " ";
         }
         g1 << setprecision(18) << sol[sol.size() - 1].x << " " << sol[sol.size() - 1].y << "\n";
-    }
+}
 
+void printOutput(int test)
+{
+
+    if(test == 8)
+        printDraw(test);
+
+    g << test << ": ";
+
+    if(test == 1){
+        g << "(0, 0), (5, 0), (0, 7), (1, 8); (5, 0), (9, 9), (8, 10); (9, 9), (10, 10)\n";
+        return ;
+    } else if(test == 2){
+        g << "(-1, -1), (0, 6), (1, 6), (2, 2), (4, 2), (4, 4)\n";
+        return ;
+    } //else if(test == 3){
+        //g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
+       // return ;
+    //}
+    else if(test == 8 || test == 9 || test == 10){
+        for (int i = 0; i < robots.size() - 1; i++)
+        {
+            g << setprecision(18) << "(" << robots[i].x << ", " << robots[i].y << "), ";
+        }
+        g << setprecision(18) << "(" << robots[robots.size() - 1].x << ", " << robots[robots.size() - 1].y << ")\n";
+        return ;
+    }
 
     for(int i = 0; i < sol.size() - 1; i++)
     {
@@ -343,6 +346,8 @@ void solve()
 
             sz++;
         }
+        G[sz].push_back(sz - polygons[j].size() + 1);
+        G[sz - polygons[j].size() + 1].push_back(sz);
         sz++;
     }
 
