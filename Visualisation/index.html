@@ -37,16 +37,9 @@
 
 							</div>
 						</div>
-						<div id="jxgbox" class="jxgbox" style="overflow:hidden;position:relative;width:600px;height:600px;"></div> 
-						<!--<nav>
-							<ul>
-								<li><a href="#intro">Intro</a></li>
-								<li><a href="#work">Work</a></li>
-								<li><a href="#about">About</a></li>
-								<li><a href="#contact">Contact</a></li>
-								<!--<li><a href="#elements">Elements</a></li>-->
-							<!--</ul>
-						</nav>-->
+						<div id="jxgbox" class="jxgbox" style="overflow:hidden;position:relative;width:600px;height:600px;"></div>
+
+
 					</header>
 
 				
@@ -70,17 +63,10 @@
 
 
 <script type="text/javascript">
-	
-	var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], keepaspectratio: true, axis:true});
-
-
-	/*board.create('polygon',[
-		board.create('point',[8.54654000000000025, 1.6545564559999999]),
-		board.create('point',[4.45645654600000007, 1.45654654654645599]),
-		board.create('point',[4.56456455999999999, 4.45645600000000019]),
-		board.create('point',[5.07000000000000028, 2.45645654540000002]),
-		]);
-	*/
+	$("#jxgbox").hide();
+	$("#fileupload").on('change',function(){$("#jxgbox").slideDown(1000);setTimeout(function() {window.scrollTo(0,document.body.scrollHeight);}, 760);
+})
+	var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], keepaspectratio: true, axis:false});
 	   
 	
 	function readSingleFile(evt) {
@@ -143,7 +129,7 @@
 	  			var y = parseFloat(pPoints[j * 2 + 1]);
 				polygonArray.push([x,y]);
 	  		}
-	  		board.create('polygon',polygonArray);
+	  		board.create('polygon',polygonArray,{fillColor: get_random_color()});
 
 	  }
 
@@ -174,7 +160,18 @@
     		board.create('line',[board.create('point',[points[i][0],points[i][1]]),board.create('point',[points[i+1][0],points[i+1][1]])],{straightFirst:false, straightLast:false, strokeWidth:2, strokeColor:'#009CDE'});
     	}
     }
-
+function get_random_color() 
+{
+    var color = "";
+    for(var i = 0; i < 3; i++) {
+        var sub = Math.floor(Math.random() * 256).toString(16);
+        color += (sub.length == 1 ? "0" + sub : sub);
+    }
+    if(color == "009CDE" || color == "FF0000"){
+    	get_random_color();
+    }
+    else return "#" + color;
+}
 </script>
 	</body>
 </html>

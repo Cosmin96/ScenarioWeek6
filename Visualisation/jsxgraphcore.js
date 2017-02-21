@@ -3817,7 +3817,7 @@
     highlightStrokeColor: "#C3D9FF",
     zoom: !1,
     showInfobox: !0,
-    infoboxDigits: "auto",
+    infoboxDigits: "none",
     draft: !1,
     attractors: [],
     attractorUnit: "user",
@@ -3835,7 +3835,7 @@
     highlightFillColor: "#00FF00",
     fillOpacity: .3,
     highlightFillOpacity: .3,
-    withLines: !0,
+    withLines: 0,
     borders: {
      withLabel: !1,
      strokeWidth: 1,
@@ -3849,6 +3849,7 @@
      layer: 9,
      withLabel: !1,
      name: "",
+     size:1,
      strokeColor: "#ff0000",
      fillColor: "#ff0000",
      fixed: !1
