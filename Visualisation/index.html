@@ -32,7 +32,7 @@
 
 							</div>
 						</div>
-						<div id="canvas" style="overflow:hidden;position:relative;width:600px;height:300px;"></div> 
+						<div id="canvas" style="overflow:hidden;position:relative;width:1000px;height:1000px;"></div> 
 						<!--<nav>
 							<ul>
 								<li><a href="#intro">Intro</a></li>
@@ -63,6 +63,39 @@
 			<script src="assets/js/main.js"></script>
 			<script type="text/JavaScript" src="jsDraw2D.js"></script>
 
+<script type="text/javascript">
+    var gr=new jsGraphics(document.getElementById("canvas"));
+    var cyanPen=new jsPen(new jsColor("blue"),4);
+    var robotPoints=new Array(new jsPoint(0,1), new jsPoint(2,0), new jsPoint(3,5), new jsPoint(6,2), new jsPoint(9,0));
+    var obstacle=new Array(new jsPoint(1,2),new jsPoint(1,4),new jsPoint(3,4),new jsPoint(3,2));
+    var obstacle2=new Array(new jsPoint(8,1),new jsPoint(4,1),new jsPoint(4,4),new jsPoint(5,2));
+    var road=new Array(new jsPoint(0,0),new jsPoint(1,2),new jsPoint(4,6),new jsPoint(3,1));
 
+    gr.setOrigin(new jsPoint(500,500)); 
+    gr.setCoordinateSystem("cartecian"); 
+    gr.showGrid(20,true,new jsColor("white"));
+    gr.setScale(50);
+
+
+    plotPoints(robotPoints);
+    gr.fillPolygon(new jsColor("green"),obstacle);
+    gr.fillPolygon(new jsColor("green"),obstacle2);
+   	plotRoad(road);
+
+    function plotPoints(points) 
+    { 
+        for( i in points) 
+        { 
+            gr.fillCircle(new jsColor("red"),new jsPoint(points[i].x,points[i].y),0.1);
+        }
+    }
+
+    function plotRoad(points){
+    	for(var i = 0; i < points.length - 1; i++){
+    		gr.drawLine(cyanPen, new jsPoint(points[i].x,points[i].y),new jsPoint(points[i+1].x,points[i+1].y));
+    	}
+    }
+
+</script>
 	</body>
 </html>
