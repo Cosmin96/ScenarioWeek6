@@ -3849,7 +3849,7 @@
      layer: 9,
      withLabel: !1,
      name: "",
-     size:1,
+     size:-1,
      strokeColor: "#ff0000",
      fillColor: "#ff0000",
      fixed: !1
