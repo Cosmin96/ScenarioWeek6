@@ -212,7 +212,7 @@ void printOutput(int test)
         return ;
     }
 
-    if(test == 3)
+    if(test == 4)
     {
         g1 << robots.size() << '\n';
         for (int i = 0; i < robots.size() - 1; i++)
