@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
+<<<<<<< HEAD
 	<File name="BasicSolution.cpp" open="1" top="0" tabpos="1">
 		<Cursor position="5369" topLine="135" />
 	</File>
@@ -10,4 +11,6 @@
 	<File name="robots.mat" open="1" top="0" tabpos="3">
 		<Cursor position="136059" topLine="0" />
 	</File>
+=======
+>>>>>>> aae2fdac5e05450cf3852b97090fad159e85fb6c
 </CodeBlocks_layout_file>
