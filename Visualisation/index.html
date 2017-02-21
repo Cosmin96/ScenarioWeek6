@@ -37,7 +37,7 @@
 
 							</div>
 						</div>
-						<div id="jxgbox" class="jxgbox" style="overflow:hidden;position:relative;width:500px;height:500px;"></div> 
+						<div id="jxgbox" class="jxgbox" style="overflow:hidden;position:relative;width:600px;height:600px;"></div> 
 						<!--<nav>
 							<ul>
 								<li><a href="#intro">Intro</a></li>
@@ -73,9 +73,16 @@
 	
 	var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], keepaspectratio: true, axis:true});
 
+
+	/*board.create('polygon',[
+		board.create('point',[8.54654000000000025, 1.6545564559999999]),
+		board.create('point',[4.45645654600000007, 1.45654654654645599]),
+		board.create('point',[4.56456455999999999, 4.45645600000000019]),
+		board.create('point',[5.07000000000000028, 2.45645654540000002]),
+		]);
+	*/
 	   
 	
-	/*
 	function readSingleFile(evt) {
     //Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0]; 
@@ -90,7 +97,7 @@
               +"size: " + f.size + " bytesn"
               + "starts with: " + contents.substr(1, contents.indexOf("n"))
 		
-        ); 
+        );*/ 
         plotInput(contents);
       }
       r.readAsText(f);
@@ -106,7 +113,7 @@
       var lines = result.split('\n');
       var rn = parseInt(lines[0], 10);
       var robotsArray = new Array();
-      var solArray = new Array();
+	  var solArray = new Array();      
 	
       
 
@@ -116,19 +123,17 @@
 	  for(var i = 0; i < rn; i++){
 	  		var x = parseFloat(robots[i * 2]);
 	  		var y = parseFloat(robots[i * 2 + 1]);
-			robotsArray.push(new jsPoint(x, y));
+			board.create('point',[x, y]);
 	  }
 
-	  plotPoints(robotsArray);
-	  console.log(robotsArray);
 
 	  actualLine++;
 
 	  var pn = parseInt(lines[actualLine], 10);
 	  for(var i = 0; i < pn; i++)
 	  {
-	  		actualLine++;
 	  		var polygonArray = new Array();
+	  		actualLine++;
 	  		var ppn = parseInt(lines[actualLine], 10);
 	  		actualLine++;
 	  		var pPoints = lines[actualLine].split(" ");
@@ -136,10 +141,10 @@
 	  		{
 	  			var x = parseFloat(pPoints[j * 2]);
 	  			var y = parseFloat(pPoints[j * 2 + 1]);
-				polygonArray.push(new jsPoint(x, y));
+				polygonArray.push([x,y]);
 	  		}
-	  		gr.fillPolygon(new jsColor("green"), polygonArray);
-	  		console.log(polygonArray);
+	  		board.create('polygon',polygonArray);
+
 	  }
 
 	  actualLine++;
@@ -151,10 +156,9 @@
 	  for(var i = 0; i < sn; i++){
 	  		var x = parseFloat(sol[i * 2]);
 	  		var y = parseFloat(sol[i * 2 + 1]);
-			solArray.push(new jsPoint(x, y));
+			solArray.push([x,y]);
 	  }
 	  plotRoad(solArray);
-	  console.log(solArray);
   }
 
 
@@ -166,7 +170,8 @@
 
     function plotRoad(points){
     	for(var i = 0; i < points.length - 1; i++){
-    		gr.drawLine(cyanPen, new jsPoint(points[i].x,points[i].y),new jsPoint(points[i+1].x,points[i+1].y));
+
+    		board.create('line',[board.create('point',[points[i][0],points[i][1]]),board.create('point',[points[i+1][0],points[i+1][1]])],{straightFirst:false, straightLast:false, strokeWidth:2});
     	}
     }
 
