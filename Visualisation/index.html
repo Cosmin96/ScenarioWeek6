@@ -10,6 +10,8 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+ 		<link rel="stylesheet" type="text/css" href="jsxgraph.css" />
+ 		<script type="text/javascript" src="jsxgraphcore.js"></script>
 		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 	</head>
@@ -28,11 +30,14 @@
 								<h1>Select a file to upload</h1>
 
 
-								<form action="myform.cgi"> <input type="file" name="fileupload" value="fileupload" id="fileupload"> <label for="fileupload"></label> <input type="submit" style="font-weight:bold" value="Upload"> </form>
+								<form action="myform.cgi"> 
+									<input style="display:none;" type="file" name="fileupload" value="fileupload" id="fileupload"> 
+									<!--<label for="fileupload"></label> -->
+									<input onclick="$('#fileupload').click();" type="button" style="font-weight:bold" value="Upload"> </form>
 
 							</div>
 						</div>
-						<div id="canvas" style="overflow:hidden;position:relative;width:1000px;height:1000px;"></div> 
+						<div id="jxgbox" class="jxgbox" style="overflow:hidden;position:relative;width:500px;height:500px;"></div> 
 						<!--<nav>
 							<ul>
 								<li><a href="#intro">Intro</a></li>
@@ -61,34 +66,103 @@
 			<script src="assets/js/skel.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-			<script type="text/JavaScript" src="jsDraw2D.js"></script>
+			<!--<script type="text/JavaScript" src="jsDraw2D.js"></script>-->
+
 
 <script type="text/javascript">
-    var gr=new jsGraphics(document.getElementById("canvas"));
-    var cyanPen=new jsPen(new jsColor("blue"),4);
-    var robotPoints=new Array(new jsPoint(0,1), new jsPoint(2,0), new jsPoint(3,5), new jsPoint(6,2), new jsPoint(9,0));
-    var obstacle=new Array(new jsPoint(1,2),new jsPoint(1,4),new jsPoint(3,4),new jsPoint(3,2));
-    var obstacle2=new Array(new jsPoint(8,1),new jsPoint(4,1),new jsPoint(4,4),new jsPoint(5,2));
-    var road=new Array(new jsPoint(0,0),new jsPoint(1,2),new jsPoint(4,6),new jsPoint(3,1));
+	
+	var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], keepaspectratio: true, axis:true});
 
-    gr.setOrigin(new jsPoint(500,500)); 
-    gr.setCoordinateSystem("cartecian"); 
-    gr.showGrid(20,true,new jsColor("white"));
-    gr.setScale(50);
+	   
+	
+	/*
+	function readSingleFile(evt) {
+    //Retrieve the first (and only!) File from the FileList object
+    var f = evt.target.files[0]; 
 
-
-    plotPoints(robotPoints);
-    gr.fillPolygon(new jsColor("green"),obstacle);
-    gr.fillPolygon(new jsColor("green"),obstacle2);
-   	plotRoad(road);
-
-    function plotPoints(points) 
-    { 
-        for( i in points) 
-        { 
-            gr.fillCircle(new jsColor("red"),new jsPoint(points[i].x,points[i].y),0.1);
-        }
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+	      var contents = e.target.result;
+        /*alert( "Got the file.n" 
+              +"name: " + f.name + "n"
+              +"type: " + f.type + "n"
+              +"size: " + f.size + " bytesn"
+              + "starts with: " + contents.substr(1, contents.indexOf("n"))
+		
+        ); 
+        plotInput(contents);
+      }
+      r.readAsText(f);
+      
+    } else { 
+      alert("Failed to load file");
     }
+  }
+
+  function plotInput(result)
+  {
+
+      var lines = result.split('\n');
+      var rn = parseInt(lines[0], 10);
+      var robotsArray = new Array();
+      var solArray = new Array();
+	
+      
+
+      var actualLine = 1;
+      var robots = lines[actualLine].split(" ");
+      console.log(robots);
+	  for(var i = 0; i < rn; i++){
+	  		var x = parseFloat(robots[i * 2]);
+	  		var y = parseFloat(robots[i * 2 + 1]);
+			robotsArray.push(new jsPoint(x, y));
+	  }
+
+	  plotPoints(robotsArray);
+	  console.log(robotsArray);
+
+	  actualLine++;
+
+	  var pn = parseInt(lines[actualLine], 10);
+	  for(var i = 0; i < pn; i++)
+	  {
+	  		actualLine++;
+	  		var polygonArray = new Array();
+	  		var ppn = parseInt(lines[actualLine], 10);
+	  		actualLine++;
+	  		var pPoints = lines[actualLine].split(" ");
+	  		for(var j = 0; j < ppn; j++)
+	  		{
+	  			var x = parseFloat(pPoints[j * 2]);
+	  			var y = parseFloat(pPoints[j * 2 + 1]);
+				polygonArray.push(new jsPoint(x, y));
+	  		}
+	  		gr.fillPolygon(new jsColor("green"), polygonArray);
+	  		console.log(polygonArray);
+	  }
+
+	  actualLine++;
+
+	  var sn = parseInt(lines[actualLine], 10);
+	  console.log(sn);
+	  actualLine++;
+	  var sol = lines[actualLine].split(" ");
+	  for(var i = 0; i < sn; i++){
+	  		var x = parseFloat(sol[i * 2]);
+	  		var y = parseFloat(sol[i * 2 + 1]);
+			solArray.push(new jsPoint(x, y));
+	  }
+	  plotRoad(solArray);
+	  console.log(solArray);
+  }
+
+
+  document.getElementById('fileupload').addEventListener('change', readSingleFile, false);
+
+ 
+
+
 
     function plotRoad(points){
     	for(var i = 0; i < points.length - 1; i++){

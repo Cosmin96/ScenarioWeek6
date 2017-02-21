@@ -199,10 +199,11 @@ void printOutput(int test)
     } else if(test == 2){
         g << "(-1, -1), (0, 6), (1, 6), (2, 2), (4, 2), (4, 4)\n";
         return ;
-    } else if(test == 3){
-        g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
-        return ;
-    } else if(test == 8 || test == 9 || test == 10){
+    } //else if(test == 3){
+        //g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
+       // return ;
+    //}
+    else if(test == 8 || test == 9 || test == 10){
         for (int i = 0; i < robots.size() - 1; i++)
         {
             g << setprecision(18) << "(" << robots[i].x << ", " << robots[i].y << "), ";
@@ -211,7 +212,7 @@ void printOutput(int test)
         return ;
     }
 
-    if(test == 4)
+    if(test == 3)
     {
         g1 << robots.size() << '\n';
         for (int i = 0; i < robots.size() - 1; i++)
