@@ -3650,7 +3650,7 @@
    infobox: {
     fontSize: 12,
     isLabel: !1,
-    strokeColor: "#bbbbbb",
+    strokeColor: "#000000",
     display: "html",
     anchorX: "left",
     anchorY: "middle",
@@ -3805,7 +3805,7 @@
     }
    },
    point: {
-    withLabel: !0,
+    withLabel: 0,
     label: {},
     style: 5,
     face: "o",
@@ -3883,7 +3883,7 @@
     },
     vertices: {
      layer: 9,
-     withLabel: !0,
+     withLabel: 0,
      strokeColor: "#ff0000",
      fillColor: "#ff0000",
      fixed: !1
@@ -14063,7 +14063,7 @@
        strokeOpacity: 1,
        straightFirst: !1,
        straightLast: !1,
-       withLabel: !0,
+       withLabel: 0,
        highlightStrokeColor: O.highlightstrokecolor
       }), B[n].getLabelAnchor = K, Y = tt(R, n), a = 0; a < i.length; a++) Z = i[a][n], f[a][n] = e.create("point", [Z, 0], {
       name: "",
