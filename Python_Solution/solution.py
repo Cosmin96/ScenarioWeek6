@@ -1,3 +1,5 @@
+from canvas import canvas
+
 file = open("robots.mat")
 
 def parseInput():
@@ -31,8 +33,5 @@ def parseInput():
 		#		m = i+3
 		#	print(obstacle)
 			
-		
-
-
 
 parseInput()
