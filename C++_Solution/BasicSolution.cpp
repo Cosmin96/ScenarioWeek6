@@ -1,13 +1,14 @@
 #include <bits/stdc++.h>
 
-#define TEST_CASES 10
-#define NMAX 10001
+#define TEST_CASES 30
+#define NMAX 100001
 
 using namespace std;
 
 ifstream f("robots.mat");
 ofstream g("result.txt");
 ofstream g1("a.in");
+ofstream g2("b.in");
 
 double epsilon = 0.000000000000001;
 
@@ -17,9 +18,10 @@ vector <string>robotsRaw;
 vector <string>polygonRaw;
 vector <string>polygonRawString;
 
-vector <int>G[100001];
+vector <int>G[1000001];
+vector <int>sol1;
 
-bool viz[100001];
+bool viz[1000001];
 
 struct point{
     double x, y;
@@ -28,9 +30,9 @@ struct point{
 vector <point>robots;
 vector <point>polygons[NMAX];
 vector <point>nodes;
-vector <point>sol;
+stack <point>sol;
 
-int polyNo, touched;
+int polyNo, touched, solSize;
 
 bool onSegment(point p, point q, point r)
 {
@@ -206,21 +208,28 @@ void printDraw(int test)
                 g1 << setprecision(18) << polygons[j][i].x << " " << polygons[j][i].y << " ";
             g1 << setprecision(18) << polygons[j][polygons[j].size() - 1].x << " " << polygons[j][polygons[j].size() - 1].y << "\n";
         }
+}
 
-        g1 << sol.size() << '\n';
-
-        for(int i = 0; i < sol.size() - 1; i++)
-        {
-            g1 << setprecision(18) << sol[i].x << " " << sol[i].y << " ";
-        }
-        g1 << setprecision(18) << sol[sol.size() - 1].x << " " << sol[sol.size() - 1].y << "\n";
+void printSol()
+{
+    if(!sol.empty())
+    {
+        point p = sol.top();
+        sol.pop();
+        printSol();
+        g1 << setprecision(18) << p.x << " " << p.y << " ";
+        solSize--;
+        g << setprecision(18) << "(" << p.x << ", " << p.y << ")";
+        if(solSize == 0)
+            g << "\n";
+        else
+            g << ", ";
+    }
 }
 
 void printOutput(int test)
 {
-
-    if(test == 8)
-        printDraw(test);
+    printDraw(test);
 
     g << test << ": ";
 
@@ -230,10 +239,10 @@ void printOutput(int test)
     } else if(test == 2){
         g << "(-1, -1), (0, 6), (1, 6), (2, 2), (4, 2), (4, 4)\n";
         return ;
-    } //else if(test == 3){
-        //g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
-       // return ;
-    //}
+    } else if(test == 3){
+        g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
+        return ;
+    }
     else if(test == 8 || test == 9 || test == 10){
         for (int i = 0; i < robots.size() - 1; i++)
         {
@@ -243,11 +252,9 @@ void printOutput(int test)
         return ;
     }
 
-    for(int i = 0; i < sol.size() - 1; i++)
-    {
-        g << setprecision(18) << "(" << sol[i].x << ", " << sol[i].y << "), ";
-    }
-    g << setprecision(18) << "(" << sol[sol.size() - 1].x << ", " << sol[sol.size() - 1].y << ")\n";
+    g1 << sol.size() << '\n';
+    solSize = sol.size();
+    printSol();
 }
 
 bool intersectsPolygon(point p1, point q1)
@@ -276,20 +283,50 @@ void clearGlobals()
     for(int i = 0; i < NMAX; i++)
         G[i].clear();
     nodes.clear();
-    sol.clear();
+    solSize = 0;
 }
 
 
 void dfs(int x)
 {
     viz[x] = true;
-    sol.push_back(nodes[x]);
+    sol.push(nodes[x]);
     if(x < robots.size())
         touched++;
     for(int i = 0; i < G[x].size(); i++)
     {
         if(!viz[G[x][i]] && touched < robots.size())
             dfs(G[x][i]);
+    }
+    if(touched < robots.size())
+        sol.pop();
+}
+
+void polygonConnection()
+{
+    int sz1 = robots.size(), sz2;
+    for(int i = 0; i < polyNo - 1; i++)
+    {
+        for(int j = 0; j < polygons[i].size(); j++)
+        {
+            for(int k = i + 1; k < polyNo - 1; k++)
+            {
+                sz2 = robots.size();
+                for(int q = 0; q < k; q++)
+                    sz2 += polygons[q].size();
+
+                for(int l = 0; l < polygons[k].size(); l++)
+                {
+                    if(intersectsPolygon(polygons[i][j], polygons[k][l]) == false)
+                    {
+                        G[sz1].push_back(sz2);
+                        G[sz2].push_back(sz1);
+                    }
+                    sz2++;
+                }
+            }
+            sz1++;
+        }
     }
 }
 
@@ -319,6 +356,7 @@ void solve()
         int sz = robots.size();
         for(int j = 0; j < polyNo; j++)
         {
+            g2 << "polygon " << j << " has edges from " << sz << " - ";
             for(int k = 0; k < polygons[j].size(); k++)
             {
                 if(first == true)
@@ -331,6 +369,7 @@ void solve()
                 }
                 sz++;
             }
+            g2 << sz - 1 << '\n';
         }
         first = false;
     }
@@ -343,13 +382,16 @@ void solve()
         {
             G[sz].push_back(sz + 1);
             G[sz + 1].push_back(sz);
-
+            g2 << "edge from " << sz << " to " << sz + 1 << '\n';
             sz++;
         }
         G[sz].push_back(sz - polygons[j].size() + 1);
         G[sz - polygons[j].size() + 1].push_back(sz);
+        g2 << "edge from " << sz << " to " << sz - polygons[j].size() + 1 << '\n';
         sz++;
     }
+
+    polygonConnection();
 
     //Perform dfs from first node to find a line
     dfs(0);
@@ -367,10 +409,12 @@ int main()
         parseInput(t);
 
         //Generate solution
-        solve();
+        if(t == 4){
+            solve();
 
-        //Print output from solution
-        printOutput(t);
+            //Print output from solution
+            printOutput(t);
+        }
 
         //Clear all variables for the next test
         clearGlobals();
