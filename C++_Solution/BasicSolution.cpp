@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 
-#define TEST_CASES 30
+#define TEST_CASES 7
 #define NMAX 100001
 
 using namespace std;
@@ -10,7 +10,7 @@ ofstream g("result.txt");
 ofstream g1("a.in");
 ofstream g2("b.in");
 
-double epsilon = 0.000000000000001;
+long double epsilon = 0.00000001;
 
 string s;
 vector <string>parts;
@@ -24,7 +24,7 @@ vector <int>sol1;
 bool viz[1000001];
 
 struct point{
-    double x, y;
+    long double x, y;
 };
 
 vector <point>robots;
@@ -43,11 +43,11 @@ bool onSegment(point p, point q, point r)
     return false;
 }
 
-double orientation(point p, point q, point r)
+long double orientation(point p, point q, point r)
 {
     // See http://www.geeksforgeeks.org/orientation-3-ordered-points/
     // for details of below formula.
-    double val = (q.y - p.y) * (r.x - q.x) -
+    long double val = (q.y - p.y) * (r.x - q.x) -
               (q.x - p.x) * (r.y - q.y);
 
     if (fabs(val) < epsilon) return 1;  // colinear
@@ -55,14 +55,42 @@ double orientation(point p, point q, point r)
     return (val > 0)? 1: 2; // clock or counterclock wise
 }
 
-bool doIntersect(point p1, point q1, point p2, point q2)
+long double sarrus(point p1, point p2, point p3)
+{
+    return (p1.x * p2.y) + (p2.x * p3.y) + (p1.y * p3.x) - (p3.x * p2.y) - (p3.y * p1.x) - (p1.y * p2.x);
+}
+
+bool doIntersect(point s1, point s2, point p1, point p2)
+{
+    /*long double x1 = p1.x, y1 = p1.y, x2 = q1.x, y2 = q1.y, x3 = p2.x, y3 = p2.y, x4 = q2.x, y4 = q2.y;
+    point lineIntersection;
+    if(fabs((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4)) < epsilon)
+        return false;
+    lineIntersection.x = ((x1*y2 - y1*x2)*(x3-x4) - (x1-x2)*(x3*y4-y3*x4)) / ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
+    lineIntersection.y = ((x1*y2 - y1*x2)*(y3-y4) - (y1-y2)*(x3*y4-y3*x4)) / ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
+
+    if(x1 > x2)
+        swap(x1, x2);
+    if(y1 > y2)
+        swap(y1, y2);
+    long double x = lineIntersection.x;
+    long double y = lineIntersection.y;
+    if(x - x1 > epsilon && x2 - x > epsilon && y - y1 > epsilon && y2 - y > epsilon)
+        return true;*/
+
+    if( (sarrus(p2, p1, s1) * sarrus(p2, p1, s2) < (-epsilon)) &&  (sarrus(s2, s1, p1) * sarrus(s2, s1, p2) < (-epsilon)) )
+        return true;
+    return false;
+}
+
+/*bool doIntersect(point p1, point q1, point p2, point q2)
 {
     // Find the four orientations needed for general and
     // special cases
-    double o1 = orientation(p1, q1, p2);
-    double o2 = orientation(p1, q1, q2);
-    double o3 = orientation(p2, q2, p1);
-    double o4 = orientation(p2, q2, q1);
+    long double o1 = orientation(p1, q1, p2);
+    long double o2 = orientation(p1, q1, q2);
+    long double o3 = orientation(p2, q2, p1);
+    long double o4 = orientation(p2, q2, q1);
 
     // General case
     if (fabs(o1 - o2) > epsilon && fabs(o3 - o4) > epsilon)
@@ -82,7 +110,7 @@ bool doIntersect(point p1, point q1, point p2, point q2)
     //if (o4 == 0 && onSegment(p2, q1, q2)) return true;
 
     return false; // Doesn't fall in any of the above cases
-}
+}*/
 
 vector<string> spliting(string str, char delim) {
     vector<string> elems;
@@ -100,9 +128,9 @@ vector<string> spliting(string str, char delim) {
     return elems;
 }
 
-double getValue(string str)
+long double getValue(string str)
 {
-    //Returning the double from the string token
+    //Returning the long double from the string token
     int startPos = -1, endPos = -1;
     for(int i = 0; i < str.length(); i++)
     {
@@ -246,9 +274,9 @@ void printOutput(int test)
     else if(test == 8 || test == 9 || test == 10){
         for (int i = 0; i < robots.size() - 1; i++)
         {
-            g << setprecision(18) << "(" << robots[i].x << ", " << robots[i].y << "), ";
+            g << setprecision(20) << "(" << robots[i].x << ", " << robots[i].y << "), ";
         }
-        g << setprecision(18) << "(" << robots[robots.size() - 1].x << ", " << robots[robots.size() - 1].y << ")\n";
+        g << setprecision(20) << "(" << robots[robots.size() - 1].x << ", " << robots[robots.size() - 1].y << ")\n";
         return ;
     }
 
@@ -309,7 +337,7 @@ void polygonConnection()
     {
         for(int j = 0; j < polygons[i].size(); j++)
         {
-            for(int k = i + 1; k < polyNo - 1; k++)
+            for(int k = i + 1; k < polyNo; k++)
             {
                 sz2 = robots.size();
                 for(int q = 0; q < k; q++)
