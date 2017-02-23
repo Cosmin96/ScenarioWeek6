@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 
-#define TEST_CASES 7
+#define TEST_CASES 30
 #define NMAX 100001
 
 using namespace std;
@@ -274,9 +274,9 @@ void printOutput(int test)
     else if(test == 8 || test == 9 || test == 10){
         for (int i = 0; i < robots.size() - 1; i++)
         {
-            g << setprecision(20) << "(" << robots[i].x << ", " << robots[i].y << "), ";
+            g << setprecision(30) << "(" << robots[i].x << ", " << robots[i].y << "), ";
         }
-        g << setprecision(20) << "(" << robots[robots.size() - 1].x << ", " << robots[robots.size() - 1].y << ")\n";
+        g << setprecision(30) << "(" << robots[robots.size() - 1].x << ", " << robots[robots.size() - 1].y << ")\n";
         return ;
     }
 
@@ -437,7 +437,7 @@ int main()
         parseInput(t);
 
         //Generate solution
-        if(t == 4){
+        if(t == 15){
             solve();
 
             //Print output from solution
