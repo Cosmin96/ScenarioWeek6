@@ -77,13 +77,7 @@
       var r = new FileReader();
       r.onload = function(e) { 
 	      var contents = e.target.result;
-        /*alert( "Got the file.n" 
-              +"name: " + f.name + "n"
-              +"type: " + f.type + "n"
-              +"size: " + f.size + " bytesn"
-              + "starts with: " + contents.substr(1, contents.indexOf("n"))
-		
-        );*/ 
+        
         plotInput(contents);
       }
       r.readAsText(f);
@@ -105,7 +99,7 @@
 
       var actualLine = 1;
       var robots = lines[actualLine].split(" ");
-      console.log(robots);
+      //console.log(robots);
 	  for(var i = 0; i < rn; i++){
 	  		var x = parseFloat(robots[i * 2]);
 	  		var y = parseFloat(robots[i * 2 + 1]);
@@ -134,17 +128,23 @@
 	  }
 
 	  actualLine++;
+	  var rnn = parseInt(lines[actualLine], 10);
+	  //console.log(rnn);
+	  for(var i = 0; i <= rnn; i++)
+	  {
+	  	actualLine++;
 
-	  var sn = parseInt(lines[actualLine], 10);
-	  console.log(sn);
-	  actualLine++;
-	  var sol = lines[actualLine].split(" ");
-	  for(var i = 0; i < sn; i++){
+	  	var sn = parseInt(lines[actualLine], 10);
+	  	//console.log(sn);
+	  	actualLine++;
+	  	var sol = lines[actualLine].split(" ");
+	  	for(var i = 0; i < sn; i++){
 	  		var x = parseFloat(sol[i * 2]);
 	  		var y = parseFloat(sol[i * 2 + 1]);
 			solArray.push([x,y]);
+	  	}
+	  	plotRoad(solArray);
 	  }
-	  plotRoad(solArray);
   }
 
 
@@ -155,9 +155,10 @@
 
 
     function plotRoad(points){
+    	var colorrrr = get_random_color();
     	for(var i = 0; i < points.length - 1; i++){
 
-    		board.create('line',[board.create('point',[points[i][0],points[i][1]]),board.create('point',[points[i+1][0],points[i+1][1]])],{straightFirst:false, straightLast:false, strokeWidth:2, strokeColor:'#009CDE', withLabel: 0});
+    		board.create('line',[board.create('point',[points[i][0],points[i][1]]),board.create('point',[points[i+1][0],points[i+1][1]])],{straightFirst:false, straightLast:false, strokeWidth:2, strokeColor:colorrrr, withLabel: 0});
     	}
     }
 function get_random_color() 

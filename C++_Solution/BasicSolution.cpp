@@ -18,7 +18,19 @@ vector <string>robotsRaw;
 vector <string>polygonRaw;
 vector <string>polygonRawString;
 
-vector <int>G[1000001];
+struct edge{
+    int node;
+    long double cost;
+};
+
+struct level{
+    int node;
+    int type;
+    int index;
+    int prev;
+};
+
+vector <edge>G[1000001];
 vector <int>sol1;
 
 bool viz[1000001];
@@ -30,30 +42,16 @@ struct point{
 vector <point>robots;
 vector <point>polygons[NMAX];
 vector <point>nodes;
-stack <point>sol;
+vector <int>sol[NMAX];
 
-int polyNo, touched, solSize;
-
-bool onSegment(point p, point q, point r)
+bool cmp(edge a, edge b)
 {
-    if (q.x <= max(p.x, r.x) && q.x >= min(p.x, r.x) &&
-        q.y <= max(p.y, r.y) && q.y >= min(p.y, r.y))
-       return true;
-
-    return false;
+    if(a.cost > b.cost)
+        return false;
+    return true;
 }
 
-long double orientation(point p, point q, point r)
-{
-    // See http://www.geeksforgeeks.org/orientation-3-ordered-points/
-    // for details of below formula.
-    long double val = (q.y - p.y) * (r.x - q.x) -
-              (q.x - p.x) * (r.y - q.y);
-
-    if (fabs(val) < epsilon) return 1;  // colinear
-
-    return (val > 0)? 1: 2; // clock or counterclock wise
-}
+int polyNo, touched, snd, routes;
 
 long double sarrus(point p1, point p2, point p3)
 {
@@ -62,55 +60,15 @@ long double sarrus(point p1, point p2, point p3)
 
 bool doIntersect(point s1, point s2, point p1, point p2)
 {
-    /*long double x1 = p1.x, y1 = p1.y, x2 = q1.x, y2 = q1.y, x3 = p2.x, y3 = p2.y, x4 = q2.x, y4 = q2.y;
-    point lineIntersection;
-    if(fabs((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4)) < epsilon)
-        return false;
-    lineIntersection.x = ((x1*y2 - y1*x2)*(x3-x4) - (x1-x2)*(x3*y4-y3*x4)) / ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
-    lineIntersection.y = ((x1*y2 - y1*x2)*(y3-y4) - (y1-y2)*(x3*y4-y3*x4)) / ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
-
-    if(x1 > x2)
-        swap(x1, x2);
-    if(y1 > y2)
-        swap(y1, y2);
-    long double x = lineIntersection.x;
-    long double y = lineIntersection.y;
-    if(x - x1 > epsilon && x2 - x > epsilon && y - y1 > epsilon && y2 - y > epsilon)
-        return true;*/
-
     if( (sarrus(p2, p1, s1) * sarrus(p2, p1, s2) < (-epsilon)) &&  (sarrus(s2, s1, p1) * sarrus(s2, s1, p2) < (-epsilon)) )
         return true;
     return false;
 }
 
-/*bool doIntersect(point p1, point q1, point p2, point q2)
+long double dist(point p1, point p2)
 {
-    // Find the four orientations needed for general and
-    // special cases
-    long double o1 = orientation(p1, q1, p2);
-    long double o2 = orientation(p1, q1, q2);
-    long double o3 = orientation(p2, q2, p1);
-    long double o4 = orientation(p2, q2, q1);
-
-    // General case
-    if (fabs(o1 - o2) > epsilon && fabs(o3 - o4) > epsilon)
-        return true;
-
-    // Special Cases
-    // p1, q1 and p2 are colinear and p2 lies on segment p1q1
-    //if (o1 == 0 && onSegment(p1, p2, q1)) return true;
-
-    // p1, q1 and p2 are colinear and q2 lies on segment p1q1
-    //if (o2 == 0 && onSegment(p1, q2, q1)) return true;
-
-    // p2, q2 and p1 are colinear and p1 lies on segment p2q2
-    //if (o3 == 0 && onSegment(p2, p1, q2)) return true;
-
-     // p2, q2 and q1 are colinear and q1 lies on segment p2q2
-    //if (o4 == 0 && onSegment(p2, q1, q2)) return true;
-
-    return false; // Doesn't fall in any of the above cases
-}*/
+    return sqrt((long double)((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)));
+}
 
 vector<string> spliting(string str, char delim) {
     vector<string> elems;
@@ -240,19 +198,35 @@ void printDraw(int test)
 
 void printSol()
 {
-    if(!sol.empty())
+    g1 << routes << '\n';
+    string solution;
+    for(int i = 0; i <= routes; i++)
     {
-        point p = sol.top();
-        sol.pop();
-        printSol();
-        g1 << setprecision(18) << p.x << " " << p.y << " ";
-        solSize--;
-        g << setprecision(18) << "(" << p.x << ", " << p.y << ")";
-        if(solSize == 0)
-            g << "\n";
-        else
-            g << ", ";
+        int pos = 0;
+        for(int j = sol[i].size() - 1; j >= 0; j--)
+            if(sol[i][j] < robots.size())
+            {
+                pos = j;
+                break;
+            }
+
+        if(pos == 0)
+            continue;
+
+        g1 << pos << "\n";
+
+        for(int j = 0; j < pos; j++)
+        {
+            point p = nodes[sol[i][j]];
+            g1 << setprecision(18) << p.x << " " << p.y << " ";
+            g << setprecision(30) << "(" << p.x << ", " << p.y << ") ";
+        }
+
+        point p = nodes[sol[i][pos]];
+        g1 << setprecision(18) << p.x << " " << p.y << "\n";
+        g << setprecision(30) << "(" << p.x << ", " << p.y << ");";
     }
+    g << "\n";
 }
 
 void printOutput(int test)
@@ -268,20 +242,19 @@ void printOutput(int test)
         g << "(-1, -1), (0, 6), (1, 6), (2, 2), (4, 2), (4, 4)\n";
         return ;
     } else if(test == 3){
-        g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
-        return ;
+        //g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
+        //return ;
     }
     else if(test == 8 || test == 9 || test == 10){
-        for (int i = 0; i < robots.size() - 1; i++)
+        /*for (int i = 0; i < robots.size() - 1; i++)
         {
             g << setprecision(30) << "(" << robots[i].x << ", " << robots[i].y << "), ";
         }
         g << setprecision(30) << "(" << robots[robots.size() - 1].x << ", " << robots[robots.size() - 1].y << ")\n";
-        return ;
+        return ;*/
     }
 
-    g1 << sol.size() << '\n';
-    solSize = sol.size();
+    //g1 << sol.size() << '\n';
     printSol();
 }
 
@@ -311,23 +284,89 @@ void clearGlobals()
     for(int i = 0; i < NMAX; i++)
         G[i].clear();
     nodes.clear();
-    solSize = 0;
+    snd = 0;
+    routes = 0;
+    for(int i = 0; i < NMAX; i++)
+        sol[i].clear();
 }
-
 
 void dfs(int x)
 {
     viz[x] = true;
-    sol.push(nodes[x]);
+    sol[routes].push_back(x);
     if(x < robots.size())
         touched++;
-    for(int i = 0; i < G[x].size(); i++)
+    if(touched < 2)
     {
-        if(!viz[G[x][i]] && touched < robots.size())
-            dfs(G[x][i]);
+        for(int i = 0; i < G[x].size(); i++)
+        {
+            if(!viz[G[x][i].node] && touched < 2)
+                dfs(G[x][i].node);
+        }
+    } else if(touched == 2)
+    {
+        snd = x;
     }
-    if(touched < robots.size())
-        sol.pop();
+}
+
+void bfs(int x)
+{
+    queue <level>q;
+    level lvl;
+
+    vector <int>aux;
+    for(int i = 0; i < G[x].size() && aux.size() < 2; i++)
+        if(!viz[G[x][i].node])
+            aux.push_back(G[x][i].node);
+
+    if(aux.size() >= 1)
+    {
+        lvl.node = aux[0]; lvl.type = 1; lvl.index = routes; lvl.prev = x;
+        q.push(lvl);
+        viz[lvl.node] = true;
+    }
+    if(aux.size() >= 2)
+    {
+        lvl.node = aux[1]; lvl.type = 2; lvl.index = (++routes); lvl.prev = x;
+        q.push(lvl);
+        viz[lvl.node] = true;
+    }
+
+    while(!q.empty() && touched < robots.size())
+    {
+        lvl = q.front(); q.pop();
+
+        if(lvl.type == 1)
+            sol[lvl.index].push_back(lvl.node);
+        else
+        {
+            sol[lvl.index].push_back(lvl.prev);
+            sol[lvl.index].push_back(lvl.node);
+        }
+
+        if(lvl.node < robots.size())
+            touched++;
+
+        aux.clear();
+        for(int i = 0; i < G[lvl.node].size() && aux.size() < 2; i++)
+            if(!viz[G[lvl.node][i].node])
+                aux.push_back(G[lvl.node][i].node);
+
+        level lvl1;
+        if(aux.size() >= 1)
+        {
+            lvl1.node = aux[0]; lvl1.type = 1; lvl1.index = lvl.index; lvl1.prev = lvl.node;
+            q.push(lvl1);
+            viz[lvl1.node] = true;
+        }
+        if(aux.size() >= 2 && lvl.node < robots.size())
+        {
+            lvl1.node = aux[1]; lvl1.type = 2; lvl1.index = (++routes); lvl1.prev = lvl.node;
+            q.push(lvl1);
+            viz[lvl1.node] = true;
+        }
+        cout << touched << '\n';
+    }
 }
 
 void polygonConnection()
@@ -347,8 +386,11 @@ void polygonConnection()
                 {
                     if(intersectsPolygon(polygons[i][j], polygons[k][l]) == false)
                     {
-                        G[sz1].push_back(sz2);
-                        G[sz2].push_back(sz1);
+                        edge e1, e2;
+                        e1.node = sz2; e1.cost = dist(polygons[i][j], polygons[k][l]);
+                        e2.node = sz1; e2.cost = dist(polygons[i][j], polygons[k][l]);
+                        G[sz1].push_back(e1);
+                        G[sz2].push_back(e2);
                     }
                     sz2++;
                 }
@@ -370,8 +412,11 @@ void solve()
         {
             if(intersectsPolygon(robots[i], robots[j]) == false)
             {
-                G[i].push_back(j);
-                G[j].push_back(i);
+                edge e1, e2;
+                e1.node = j; e1.cost = dist(robots[i], robots[j]);
+                e2.node = i; e2.cost = dist(robots[i], robots[j]);
+                G[i].push_back(e1);
+                G[j].push_back(e2);
             }
         }
     }
@@ -392,8 +437,11 @@ void solve()
 
                 if(intersectsPolygon(robots[i], polygons[j][k]) == false)
                 {
-                    G[i].push_back(sz);
-                    G[sz].push_back(i);
+                    edge e1, e2;
+                    e1.node = sz; e1.cost = dist(robots[i], polygons[j][k]);
+                    e2.node = i; e2.cost = dist(robots[i], polygons[j][k]);
+                    G[i].push_back(e1);
+                    G[sz].push_back(e2);
                 }
                 sz++;
             }
@@ -408,21 +456,39 @@ void solve()
     {
         for(int i = 0; i < polygons[j].size() - 1; i++)
         {
-            G[sz].push_back(sz + 1);
-            G[sz + 1].push_back(sz);
-            g2 << "edge from " << sz << " to " << sz + 1 << '\n';
+            edge e1, e2;
+            e1.node = sz + 1; e1.cost = dist(polygons[j][i], polygons[j][i + 1]);
+            e2.node = sz; e2.cost = dist(polygons[j][i], polygons[j][i + 1]);
+            G[sz].push_back(e1);
+            G[sz + 1].push_back(e2);
             sz++;
         }
-        G[sz].push_back(sz - polygons[j].size() + 1);
-        G[sz - polygons[j].size() + 1].push_back(sz);
-        g2 << "edge from " << sz << " to " << sz - polygons[j].size() + 1 << '\n';
+        edge e1, e2;
+        e1.node = sz - polygons[j].size() + 1; e1.cost = dist(polygons[j][0], polygons[j][polygons[j].size() - 1]);
+        e2.node = sz; e2.cost = dist(polygons[j][0], polygons[j][polygons[j].size() - 1]);
+        G[sz].push_back(e1);
+        G[sz - polygons[j].size() + 1].push_back(e2);
         sz++;
     }
 
     polygonConnection();
 
-    //Perform dfs from first node to find a line
+    //Sort edges in order
+    for(int i = 0; i < NMAX; i++)
+    {
+        int pos = G[i].size();
+        for(int j = 0; j < G[i].size(); j++)
+            if(G[i][j].node >= robots.size()){
+                pos = j;
+                break;
+            }
+        sort(G[i].begin(), G[i].begin() + pos, cmp);
+    }
+
     dfs(0);
+    //Perform dfs from first node to find a line
+    if(touched < robots.size())
+        bfs(snd);
 }
 
 int main()
@@ -437,7 +503,7 @@ int main()
         parseInput(t);
 
         //Generate solution
-        if(t == 15){
+        if(t == 8){
             solve();
 
             //Print output from solution
