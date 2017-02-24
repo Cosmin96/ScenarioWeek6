@@ -493,7 +493,7 @@ int main()
         parseInput(t);
 
         //Generate solution
-        if(t > 0){
+        if(t == 30){
             solve();
 
             //Print output from solution

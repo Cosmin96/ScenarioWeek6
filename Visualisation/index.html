@@ -31,6 +31,19 @@
 
 
 								<form action="myform.cgi"> 
+									<select id="timeSelect">
+										<option value"0" selected disabled>Select the waiting time between line plotting</option>
+										<option value="0">0 secs</option>
+										<option value="200">0.2 secs</option>
+										<option value="500">0.5 secs</option>
+										<option value="800">0.8 secs</option>
+										<option value="1000">1 sec</option>
+										<option value="2000">2 secs</option>
+										<option value="3000">3 secs</option>
+										<option value="5000">5 secs</option>
+										<option value="10000">10 secs</option>
+									</select>
+									<br>
 									<input style="display:none;" type="file" name="fileupload" value="fileupload" id="fileupload"> 
 									<!--<label for="fileupload"></label> -->
 									<input onclick="$('#fileupload').click();" type="button" style="font-weight:bold" value="Upload"> </form>
@@ -68,7 +81,12 @@
 })
 	var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], keepaspectratio: true, axis:false});
 	   
+	var timeToSleep = 0;
 	
+	$("#timeSelect").change(function(){
+		timeToSleep = $(this).val();
+	});
+
 	function readSingleFile(evt) {
     //Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0]; 
@@ -102,7 +120,7 @@
 	  for(var i = 0; i < rn; i++){
 	  		var x = parseFloat(robots[i * 2]);
 	  		var y = parseFloat(robots[i * 2 + 1]);
-			board.create('point',[x, y],{size:8,face:'x',withLabel: 0, color:'#00008B'});
+			board.create('point',[x, y],{size:8,face:'<>',withLabel: 0, color:'#00008B'});
 	  }
 
 
@@ -129,21 +147,27 @@
 	  actualLine++;
 	  var rnn = parseInt(lines[actualLine], 10);
 	  console.log(rnn);
-	  for(var j = 0; j < rnn; j++)
+	  for(var j = 0; j <= rnn; j++)
 	  {
-	  	var solArray = new Array();  
-	  	actualLine++;
+	  	setTimeout(function(){
+	  		var solArray = new Array();  
+	  		actualLine++;
 
-	  	var sn = parseInt(lines[actualLine], 10);
-	  	//console.log(sn);
-	  	actualLine++;
-	  	var sol = lines[actualLine].split(" ");
-	  	for(var i = 0; i <= sn; i++){
-	  		var x = parseFloat(sol[i * 2]);
-	  		var y = parseFloat(sol[i * 2 + 1]);
-			solArray.push([x,y]);
-	  	}
-	  	plotRoad(solArray);
+	  		var sn = parseInt(lines[actualLine], 10);
+	  		//console.log(sn);
+	  		actualLine++;
+	  		if(lines[actualLine] != null){
+	  			var sol = lines[actualLine].split(" ");
+	  			for(var i = 0; i <= sn; i++){
+	  				var x = parseFloat(sol[i * 2]);
+	  				var y = parseFloat(sol[i * 2 + 1]);
+					solArray.push([x,y]);
+	  			}
+	  			plotRoad(solArray);
+	  		}
+	  	}, timeToSleep * (j + 1));
+	  	
+	  	//setTimeout( plotRoad(solArray), 100);
 	  }
   }
 
@@ -152,7 +176,7 @@
 
  
 
-
+  	
 
     function plotRoad(points){
     	console.log(points);
