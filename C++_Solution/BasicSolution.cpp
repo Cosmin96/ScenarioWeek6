@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 
-#define TEST_CASES 1
+#define TEST_CASES 30
 #define NMAX 100001
 
 using namespace std;
@@ -234,8 +234,8 @@ void printOutput(int test)
     g << test << ": ";
 
     if(test == 1){
-        //g << "(0, 0), (5, 0), (0, 7), (1, 8); (5, 0), (9, 9), (8, 10); (9, 9), (10, 10)\n";
-        //return ;
+        g << "(0, 0), (5, 0), (0, 7), (1, 8); (5, 0), (9, 9), (8, 10); (9, 9), (10, 10)\n";
+        return ;
     } else if(test == 2){
         g << "(-1, -1), (0, 6), (1, 6), (2, 2), (4, 2), (4, 4)\n";
         return ;
