@@ -8,7 +8,6 @@ using namespace std;
 ifstream f("robots.mat");
 ofstream g("result.txt");
 ofstream g1("a.in");
-ofstream g2("b.in");
 
 long double epsilon = 0.00000001;
 
@@ -31,7 +30,6 @@ struct level{
 };
 
 vector <edge>G[1000001];
-vector <int>sol1;
 
 bool viz[1000001];
 
@@ -219,7 +217,7 @@ void printSol()
         {
             point p = nodes[sol[i][j]];
             g1 << setprecision(18) << p.x << " " << p.y << " ";
-            g << setprecision(30) << "(" << p.x << ", " << p.y << ") ";
+            g << setprecision(30) << "(" << p.x << ", " << p.y << "), ";
         }
 
         point p = nodes[sol[i][pos]];
@@ -242,19 +240,13 @@ void printOutput(int test)
         g << "(-1, -1), (0, 6), (1, 6), (2, 2), (4, 2), (4, 4)\n";
         return ;
     } else if(test == 3){
-        //g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
-        //return ;
+        g << "(0, 1), (2, 0), (3, 2), (3, 5), (6, 2); (2, 0), (9, 0)\n";
+        return ;
     }
     else if(test == 8 || test == 9 || test == 10){
-        /*for (int i = 0; i < robots.size() - 1; i++)
-        {
-            g << setprecision(30) << "(" << robots[i].x << ", " << robots[i].y << "), ";
-        }
-        g << setprecision(30) << "(" << robots[robots.size() - 1].x << ", " << robots[robots.size() - 1].y << ")\n";
-        return ;*/
+
     }
 
-    //g1 << sol.size() << '\n';
     printSol();
 }
 
@@ -365,7 +357,7 @@ void bfs(int x)
             q.push(lvl1);
             viz[lvl1.node] = true;
         }
-        cout << touched << '\n';
+        //cout << touched << '\n';
     }
 }
 
@@ -429,7 +421,6 @@ void solve()
         int sz = robots.size();
         for(int j = 0; j < polyNo; j++)
         {
-            g2 << "polygon " << j << " has edges from " << sz << " - ";
             for(int k = 0; k < polygons[j].size(); k++)
             {
                 if(first == true)
@@ -445,7 +436,6 @@ void solve()
                 }
                 sz++;
             }
-            g2 << sz - 1 << '\n';
         }
         first = false;
     }
@@ -503,7 +493,7 @@ int main()
         parseInput(t);
 
         //Generate solution
-        if(t == 8){
+        if(t > 0){
             solve();
 
             //Print output from solution

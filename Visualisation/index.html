@@ -92,8 +92,7 @@
 
       var lines = result.split('\n');
       var rn = parseInt(lines[0], 10);
-      var robotsArray = new Array();
-	  var solArray = new Array();      
+      var robotsArray = new Array();    
 	
       
 
@@ -103,7 +102,7 @@
 	  for(var i = 0; i < rn; i++){
 	  		var x = parseFloat(robots[i * 2]);
 	  		var y = parseFloat(robots[i * 2 + 1]);
-			board.create('point',[x, y],{size:8,face:'x',withLabel: 0});
+			board.create('point',[x, y],{size:4,face:'x',withLabel: 0});
 	  }
 
 
@@ -129,16 +128,17 @@
 
 	  actualLine++;
 	  var rnn = parseInt(lines[actualLine], 10);
-	  //console.log(rnn);
-	  for(var i = 0; i <= rnn; i++)
+	  console.log(rnn);
+	  for(var j = 0; j < rnn; j++)
 	  {
+	  	var solArray = new Array();  
 	  	actualLine++;
 
 	  	var sn = parseInt(lines[actualLine], 10);
 	  	//console.log(sn);
 	  	actualLine++;
 	  	var sol = lines[actualLine].split(" ");
-	  	for(var i = 0; i < sn; i++){
+	  	for(var i = 0; i <= sn; i++){
 	  		var x = parseFloat(sol[i * 2]);
 	  		var y = parseFloat(sol[i * 2 + 1]);
 			solArray.push([x,y]);
@@ -155,6 +155,7 @@
 
 
     function plotRoad(points){
+    	console.log(points);
     	var colorrrr = get_random_color();
     	for(var i = 0; i < points.length - 1; i++){
 
