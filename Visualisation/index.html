@@ -56,7 +56,7 @@
 							</div>
 						</div>
 						<div id="jxgbox" class="jxgbox" style="overflow:hidden;position:relative;width:600px;height:600px;"></div>
-						<p align="center"><img id="monkey" src="monkey.png"></p>
+						
 
 					</header>
 
@@ -64,7 +64,7 @@
 
 				<!-- Footer -->
 					<footer id="footer">
-						<p id ="copy-right" class="copyright">&copy; Scenario Week 6 - Group AD. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+						<p class="copyright">&copy; Scenario Week 6 - Group AD. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
 					</footer>
 
 			</div>
@@ -84,7 +84,7 @@
 	$("#jxgbox").hide();
 	$("#fileupload").on('change',function(){$("#jxgbox").slideDown(1000);setTimeout(function() {window.scrollTo(0,document.body.scrollHeight);}, 760);
 })
-	var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], keepaspectratio: true, axis:false});
+	var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], keepaspectratio: true, axis:false, zoom:{wheel:true}});
 	   
 	var timeToSleep = 0;
 	
@@ -203,11 +203,6 @@ function get_random_color()
     }
     else return "#" + color;
 }
-</script>
-<script>
-$("#monkey").hide();
-$("#copy-right").on('mouseover', function (){$("#monkey").slideDown();});
-$("#monkey").on('mouseleave', function (){$("#monkey").slideUp();});
 </script>
 	</body>
 </html>
