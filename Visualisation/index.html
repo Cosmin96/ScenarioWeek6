@@ -29,7 +29,7 @@
 						</div>
 						<div class="content">
 							<div class="inner">
-								<p align="center"><img src="logo2.png" width="40%" height="40%"></p>
+								<p align="center"><a href="input.rar"><img src="logo2.png" width="40%" height="40%"></a></p>
 								<h1>Select a file to upload</h1>
 
 
@@ -54,7 +54,7 @@
 							</div>
 						</div>
 						<div id="jxgbox" class="jxgbox" style="overflow:hidden;position:relative;width:600px;height:600px;"></div>
-
+						<p align="center"><img id="monkey" src="monkey.png"></p>
 
 					</header>
 
@@ -62,7 +62,7 @@
 
 				<!-- Footer -->
 					<footer id="footer">
-						<p class="copyright">&copy; Scenario Week 6 - Group AD. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+						<p id ="copy-right" class="copyright">&copy; Scenario Week 6 - Group AD. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
 					</footer>
 
 			</div>
@@ -201,6 +201,11 @@ function get_random_color()
     }
     else return "#" + color;
 }
+</script>
+<script>
+$("#monkey").hide();
+$("#copy-right").on('mouseover', function (){$("#monkey").slideDown();});
+$("#monkey").on('mouseleave', function (){$("#monkey").slideUp();});
 </script>
 	</body>
 </html>
